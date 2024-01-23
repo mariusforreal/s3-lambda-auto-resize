@@ -14,8 +14,11 @@ To create out lambda function, we need to get a few things ready. Let's create o
 I name my policy "LambdaS3Policy" and my role "LambdaS3Role"
 
 use this custom policy while creating the above policy:
--------------------------------------
-{
+
+
+    ----------------------------------------------
+
+    {
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -43,6 +46,7 @@ use this custom policy while creating the above policy:
         }
     ]
 }
+
 ----------------------------------------------
 
 when done, attaxch the policy to the lambda role(LambdaS3Role) created above.
@@ -57,8 +61,8 @@ Once in your project directory, create a file for your lambda code : sudo vi lam
 
 Past this python code in the file created and save 
 
-----------------------------------------------------
-
+    -----------------------------------------
+    
 import boto3
 import os
 import sys
@@ -84,13 +88,15 @@ def lambda_handler(event, context):
     s3_client.download_file(bucket, key, download_path)
     resize_image(download_path, upload_path)
     s3_client.upload_file(upload_path, '{}-resized'.format(bucket), 'resized-{}'.format(key))
+    
 
-    ---------------------------------------------------------------------------------------
+    -----------------------------------------------
+    
 
 
-    While making sure you are in the same directory(auto-process-pictures-with-lambda) above create a subdirectory called "package" and install the PIL and AWS SDK for python. Copying and pasting the below commands creates the filder and installs the dependencies:
+While making sure you are in the same directory(auto-process-pictures-with-lambda) above create a subdirectory called "package" and install the PIL and AWS SDK for python. Copying and pasting the below commands creates the filder and installs the dependencies:
 
-    mkdir package
+mkdir package
 pip install \
 --platform manylinux2014_x86_64 \
 --target=package \
