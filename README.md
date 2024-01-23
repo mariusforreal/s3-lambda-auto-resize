@@ -15,35 +15,34 @@ I name my policy "LambdaS3Policy" and my role "LambdaS3Role"
 
 use this custom policy while creating the above policy:
 
-
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:PutLogEvents",
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream"
-            ],
-            "Resource": "arn:aws:logs:*:*:*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": "arn:aws:s3:::*/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject"
-            ],
-            "Resource": "arn:aws:s3:::*/*"
-        }
-    ]
-}
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "logs:PutLogEvents",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream"
+                ],
+                "Resource": "arn:aws:logs:*:*:*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "s3:GetObject"
+                ],
+                "Resource": "arn:aws:s3:::*/*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "s3:PutObject"
+                ],
+                "Resource": "arn:aws:s3:::*/*"
+            }
+        ]
+    }
 
 when done, attaxch the policy to the lambda role(LambdaS3Role) created above.
 
@@ -51,64 +50,61 @@ Here's where it gets intetresting. We need to create a deployment package.
 
 in your IDE create a folder for this project. 
 
-mkdir auto-process-pictures-with-lambda && cd auto-process-pictures-with-lambda
+    mkdir auto-process-pictures-with-lambda && cd auto-process-pictures-with-lambda
 
 Once in your project directory, create a file for your lambda code : sudo vi lambda_function.py
 
 Past this python code in the file created and save 
 
     
-import boto3
-import os
-import sys
-import uuid
-from urllib.parse import unquote_plus
-from PIL import Image
-import PIL.Image
-            
-s3_client = boto3.client('s3')
-            
-def resize_image(image_path, resized_path):
-  with Image.open(image_path) as image:
-    image.thumbnail(tuple(x / 2 for x in image.size))
-    image.save(resized_path)
-            
-def lambda_handler(event, context):
-  for record in event['Records']:
-    bucket = record['s3']['bucket']['name']
-    key = unquote_plus(record['s3']['object']['key'])
-    tmpkey = key.replace('/', '')
-    download_path = '/tmp/{}{}'.format(uuid.uuid4(), tmpkey)
-    upload_path = '/tmp/resized-{}'.format(tmpkey)
-    s3_client.download_file(bucket, key, download_path)
-    resize_image(download_path, upload_path)
-    s3_client.upload_file(upload_path, '{}-resized'.format(bucket), 'resized-{}'.format(key))
-    
-
-   
+    import boto3
+    import os
+    import sys
+    import uuid
+    from urllib.parse import unquote_plus
+    from PIL import Image
+    import PIL.Image
+                
+    s3_client = boto3.client('s3')
+                
+    def resize_image(image_path, resized_path):
+      with Image.open(image_path) as image:
+        image.thumbnail(tuple(x / 2 for x in image.size))
+        image.save(resized_path)
+                
+    def lambda_handler(event, context):
+      for record in event['Records']:
+        bucket = record['s3']['bucket']['name']
+        key = unquote_plus(record['s3']['object']['key'])
+        tmpkey = key.replace('/', '')
+        download_path = '/tmp/{}{}'.format(uuid.uuid4(), tmpkey)
+        upload_path = '/tmp/resized-{}'.format(tmpkey)
+        s3_client.download_file(bucket, key, download_path)
+        resize_image(download_path, upload_path)
+        s3_client.upload_file(upload_path, '{}-resized'.format(bucket), 'resized-{}'.format(key))
     
 
 
 While making sure you are in the same directory(auto-process-pictures-with-lambda) above create a subdirectory called "package" and install the PIL and AWS SDK for python. Copying and pasting the below commands creates the filder and installs the dependencies:
 
 
-mkdir package
-pip install \
---platform manylinux2014_x86_64 \
---target=package \
---implementation cp \
---python-version 3.9 \
---only-binary=:all: --upgrade \
-pillow boto3
+     mkdir package
+    pip install \
+    --platform manylinux2014_x86_64 \
+    --target=package \
+    --implementation cp \
+    --python-version 3.9 \
+    --only-binary=:all: --upgrade \
+    pillow boto3
 
 Now that the dependencies have been created in our working directory, we need to zip the whole working directory and this is what we will use as our lambda code:
 
 Use the following command to cd back to tyhe parent folder and zip the folder content.
 
-cd package
-zip -r ../lambda_function.zip .
-cd ..
-zip lambda_function.zip lambda_function.py
+    cd package
+    zip -r ../lambda_function.zip .
+    cd ..
+    zip lambda_function.zip lambda_function.py
 
 
 
