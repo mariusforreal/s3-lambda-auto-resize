@@ -14,10 +14,8 @@ To create out lambda function, we need to get a few things ready. Let's create o
 I name my policy "LambdaS3Policy" and my role "LambdaS3Role"
 
 use this custom policy while creating the above policy:
-
-
     
-
+###
     {
     "Version": "2012-10-17",
     "Statement": [
@@ -47,7 +45,7 @@ use this custom policy while creating the above policy:
     ]
 }
 
-
+###
 
 when done, attaxch the policy to the lambda role(LambdaS3Role) created above.
 
