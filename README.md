@@ -95,6 +95,7 @@ def lambda_handler(event, context):
 
 While making sure you are in the same directory(auto-process-pictures-with-lambda) above create a subdirectory called "package" and install the PIL and AWS SDK for python. Copying and pasting the below commands creates the filder and installs the dependencies:
 
+
 mkdir package
 pip install \
 --platform manylinux2014_x86_64 \
