@@ -45,6 +45,7 @@ use this custom policy while creating the above policy:
     ]
 }
 
+
 ###
 
 when done, attaxch the policy to the lambda role(LambdaS3Role) created above.
