@@ -16,7 +16,7 @@ I name my policy "LambdaS3Policy" and my role "LambdaS3Role"
 use this custom policy while creating the above policy:
 
 
-    ----------------------------------------------
+    
 
     {
     "Version": "2012-10-17",
@@ -47,7 +47,7 @@ use this custom policy while creating the above policy:
     ]
 }
 
-----------------------------------------------
+
 
 when done, attaxch the policy to the lambda role(LambdaS3Role) created above.
 
@@ -61,7 +61,6 @@ Once in your project directory, create a file for your lambda code : sudo vi lam
 
 Past this python code in the file created and save 
 
-    -----------------------------------------
     
 import boto3
 import os
@@ -90,7 +89,7 @@ def lambda_handler(event, context):
     s3_client.upload_file(upload_path, '{}-resized'.format(bucket), 'resized-{}'.format(key))
     
 
-    -----------------------------------------------
+   
     
 
 
